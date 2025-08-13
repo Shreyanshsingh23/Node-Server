@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PokéHub — Trainer's Log</title>
+
+  <!-- Inline / internal CSS (single-file) -->
+  <style>
+    :root{
+      --bg-grad: linear-gradient(135deg,#FFDE59 0%, #FFD166 30%, #FF9AA2 60%, #9AD0F5 100%);
+      --card-bg: rgba(255,255,255,0.9);
+      --accent: #E3352A; /* pokeball red */
+      --muted: #556;
+      --glass: rgba(255,255,255,0.6);
+      --shadow: 0 10px 30px rgba(16,24,40,0.12);
+      --glass-2: rgba(255,255,255,0.12);
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background: var(--bg-grad);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      color:#222;
+    }
+
+    /* Top header */
+    .hero{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:space-between;
+      padding:28px;
+      backdrop-filter: blur(6px);
+      box-shadow: var(--shadow);
+      background: linear-gradient(90deg, rgba(255,255,255,0.25), rgba(255,255,255,0.08));
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+
+    .pokeball {
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      position:relative;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(#fff,#eee);
+    }
+    /* pokeball face */
+    .pokeball::before{
+      content:"";
+      position:absolute;
+      left:0; right:0; top:0; bottom:50%;
+      background: linear-gradient(#ff5a55,#d62828);
+      border-top-left-radius:50% 50%;
+      border-top-right-radius:50% 50%;
+      border-bottom:6px solid #222;
+    }
+    .pokeball::after{
+      content:"";
+      position:absolute;
+      left:8px; right:8px; top:calc(50% - 6px); height:12px;
+      background:#222;
+      border-radius:6px;
+    }
+    .pokeball .center{
+      position:relative;
+      width:28px;height:28px;border-radius:50%;
+      background:#fff;border:6px solid #222;box-sizing:border-box;
+      display:flex;align-items:center;justify-content:center;font-weight:700;
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:0.6px;
+    }
+    p.lead{ margin:0;color:var(--muted);font-size:13px; }
+
+    /* Controls */
+    .controls{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    input[type="search"]{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(34,34,34,0.08);
+      min-width:220px;
+      outline:none;
+      font-size:14px;
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06) inset;
+    }
+    .btn{
+      padding:10px 14px;
+      border-radius:12px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      background:var(--accent);
+      color:#fff;
+      box-shadow: 0 6px 18px rgba(227,53,42,0.22);
+    }
+    .btn.secondary{
+      background:transparent;color:#111;border:1px solid rgba(0,0,0,0.06);
+      box-shadow:none;
+    }
+
+    /* Main grid */
+    main{
+      padding:28px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap:18px;
+      align-items:start;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82));
+      border-radius:18px;
+      padding:16px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.6);
+    }
+    .card .type{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      display:inline-block;
+      margin-bottom:8px;
+      background:var(--glass-2);
+      color:#fff;
+      font-weight:700;
+      letter-spacing:0.6px;
+      text-transform:uppercase;
+    }
+
+    .poke-emoji{
+      font-size:56px;
+      line-height:1;
+      display:inline-block;
+      width:88px;height:88px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.15));
+      display:flex;align-items:center;justify-content:center;
+      box-shadow: 0 10px 30px rgba(16,24,40,0.08) inset;
+      float:right;
+      margin-left:10px;
+    }
+
+    .card h3{
+      margin:0 0 6px 0;
+      font-size:18px;
+    }
+    .card p{ margin:0 0 12px 0;color:var(--muted); font-size:13px; }
+
+    .meta{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .meta span{
+      font-size:12px;padding:6px 8px;border-radius:10px;background: rgba(0,0,0,0.03);
+    }
+
+    .actions{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .catch-btn{
+      padding:8px 12px;border-radius:10px;border:none;font-weight:700;
+      cursor:pointer;background:linear-gradient(180deg,#fff,#ffe5e3);
+      box-shadow: 0 6px 14px rgba(227,53,42,0.12);
+      color:var(--accent);
+    }
+    .caught{
+      background:linear-gradient(180deg,#c7f0c1,#a6e89d); color:#046a03;
+      box-shadow: 0 8px 20px rgba(10,80,20,0.12);
+    }
+
+    /* footer badge */
+    footer{
+      margin-top:24px;
+      text-align:center;
+      color:#333;
+      font-size:13px;
+      opacity:0.8;
+    }
+
+    /* subtle animations */
+    .card:hover{ transform:translateY(-6px); transition: all 220ms ease; }
+    .pokeball, .card{ transition: transform 240ms ease, box-shadow 200ms ease; }
+
+    /* small responsive tweak */
+    @media (max-width:540px){
+      .hero{ flex-direction:column; gap:12px; align-items:flex-start; }
+      .pokeball{ width:56px; height:56px; }
+      .poke-emoji{ float:none; display:block; margin:12px auto 6px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top hero/header -->
+  <header class="hero" style="border-radius:0 0 20px 20px;">
+    <div class="brand">
+      <div class="pokeball" aria-hidden="true" title="PokéHub">
+        <div class="center">PK</div>
+      </div>
+      <div>
+        <h1>PokéHub — Trainer's Log</h1>
+        <p class="lead">Collect, catch & track your pocket monsters — your journey begins here.</p>
+      </div>
+    </div>
+
+    <div class="controls" role="search" aria-label="Search pokémon">
+      <input id="search" type="search" placeholder="Search Pokémon (ex: pikachu)" />
+      <button id="clearBtn" class="btn secondary" title="Reset">Reset</button>
+      <button id="randomBtn" class="btn">Surprise Me</button>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main>
+    <section>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;">
+        <h2 style="margin:0;font-size:18px;">Nearby Pokémon</h2>
+        <span style="padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.6);font-weight:700;color:#333;">Route 1</span>
+      </div>
+
+      <div class="grid" id="pokedex">
+        <!-- Card 1 -->
+        <article class="card" data-name="pikachu" data-type="electric">
+          <div class="type" style="background:linear-gradient(90deg,#FFD54A,#FFB300);">Electric</div>
+          <div class="poke-emoji" aria-hidden="true" style="background: radial-gradient(circle at 40% 35%, #fff, rgba(255,255,255,0.2));">⚡</div>
+          <h3>Pikachu</h3>
+          <p>Electric-type mouse Pokémon. Loves thunder and cheeks that store electricity.</p>
+          <div class="meta">
+            <span>Lv. 12</span>
+            <span>CP: 430</span>
+            <span>HP: 35</span>
+          </div>
+          <div class="actions">
+            <button class="catch-btn" onclick="toggleCatch(this)" aria-pressed="false">Catch</button>
+            <button class="btn secondary" onclick="alert('Checked Pikachu profile!')">Profile</button>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="card" data-name="bulbasaur" data-type="grass">
+          <div class="type" style="background:linear-gradient(90deg,#7ed989,#4DBA76);">Grass</div>
+          <div class="poke-emoji" aria-hidden="true" style="font-size:48px;">🌱</div>
+          <h3>Bulbasaur</h3>
+          <p>Grass/Poison seed Pokémon. Grows stronger as the seed on its back soaks in sunlight.</p>
+          <div class="meta">
+            <span>Lv. 10</span>
+            <span>CP: 320</span>
+            <span>HP: 45</span>
+          </div>
+          <div class="actions">
+            <button class="catch-btn" onclick="toggleCatch(this)" aria-pressed="false">Catch</button>
+            <button class="btn secondary" onclick="alert('Checked Bulbasaur profile!')">Profile</button>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="card" data-name="charmander" data-type="fire">
+          <div class="type" style="background:linear-gradient(90deg,#ffb179,#ff7a42);">Fire</div>
+          <div class="poke-emoji" aria-hidden="true" style="font-size:48px;">🔥</div>
+          <h3>Charmander</h3>
+          <p>Fire lizard Pokémon. Tail flame indicates its life force — keep it burning bright.</p>
+          <div class="meta">
+            <span>Lv. 9</span>
+            <span>CP: 310</span>
+            <span>HP: 39</span>
+          </div>
+          <div class="actions">
+            <button class="catch-btn" onclick="toggleCatch(this)" aria-pressed="false">Catch</button>
+            <button class="btn secondary" onclick="alert('Checked Charmander profile!')">Profile</button>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="card" data-name="squirtle" data-type="water">
+          <div class="type" style="background:linear-gradient(90deg,#9ad7ff,#59b6ff);">Water</div>
+          <div class="poke-emoji" aria-hidden="true" style="font-size:48px;">💧</div>
+          <h3>Squirtle</h3>
+          <p>Little turtle Pokémon. Uses water-based attacks and retreats into its shell when threatened.</p>
+          <div class="meta">
+            <span>Lv. 8</span>
+            <span>CP: 290</span>
+            <span>HP: 44</span>
+          </div>
+          <div class="actions">
+            <button class="catch-btn" onclick="toggleCatch(this)" aria-pressed="false">Catch</button>
+            <button class="btn secondary" onclick="alert('Checked Squirtle profile!')">Profile</button>
+          </div>
+        </article>
+
+        <!-- Card 5 (example rare) -->
+        <article class="card" data-name="eevee" data-type="normal">
+          <div class="type" style="background:linear-gradient(90deg,#f3d7b6,#e8b47a);">Normal</div>
+          <div class="poke-emoji" aria-hidden="true" style="font-size:48px;">✨</div>
+          <h3>Eevee</h3>
+          <p>A flexible evolution Pokémon. Its unstable genetic makeup makes adapting to its environment easy.</p>
+          <div class="meta">
+            <span>Lv. 7</span>
+            <span>CP: 260</span>
+            <span>HP: 55</span>
+          </div>
+          <div class="actions">
+            <button class="catch-btn" onclick="toggleCatch(this)" aria-pressed="false">Catch</button>
+            <button class="btn secondary" onclick="alert('Checked Eevee profile!')">Profile</button>
+          </div>
+        </article>
+      </div>
+
+      <footer>
+        <p>Tip: Use the search box to filter Pokémon by name. Click <strong>Catch</strong> to add them to your Trainer Log.</p>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Small interactive JS inlined (still part of the single HTML file) -->
+  <script>
+    // Helper: toggle caught state
+    function toggleCatch(btn){
+      const card = btn.closest('.card');
+      const name = card.dataset.name || 'pokemon';
+      const isCaught = btn.classList.contains('caught');
+
+      if(!isCaught){
+        btn.classList.add('caught');
+        btn.textContent = 'Caught ✓';
+        btn.setAttribute('aria-pressed','true');
+        card.style.border = "2px solid rgba(10,150,60,0.18)";
+        // simple persistent store in localStorage
+        saveStatus(name,true);
+      } else {
+        btn.classList.remove('caught');
+        btn.textContent = 'Catch';
+        btn.setAttribute('aria-pressed','false');
+        card.style.border = "1px solid rgba(255,255,255,0.6)";
+        saveStatus(name,false);
+      }
+    }
+
+    // store caught state in localStorage
+    function saveStatus(name,flag){
+      try {
+        const store = JSON.parse(localStorage.getItem('caught')||'{}');
+        store[name] = !!flag;
+        localStorage.setItem('caught', JSON.stringify(store));
+      } catch(e){ /* ignore */ }
+    }
+
+    // load statuses on start
+    (function loadCaught(){
+      try {
+        const store = JSON.parse(localStorage.getItem('caught')||'{}');
+        document.querySelectorAll('.card').forEach(card=>{
+          const name = card.dataset.name;
+          if(store[name]){
+            const btn = card.querySelector('.catch-btn');
+            btn && btn.classList.add('caught') && (btn.textContent = 'Caught ✓');
+            card.style.border = "2px solid rgba(10,150,60,0.18)";
+          }
+        });
+      } catch(e){}
+    })();
+
+    // Search filter
+    const input = document.getElementById('search');
+    input.addEventListener('input', (e)=>{
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('.card').forEach(card => {
+        const name = card.dataset.name || '';
+        const type = card.dataset.type || '';
+        const matches = !q || name.includes(q) || type.includes(q);
+        card.style.display = matches ? '' : 'none';
+      });
+    });
+
+    // Reset & random
+    document.getElementById('clearBtn').addEventListener('click', ()=>{
+      input.value = '';
+      input.dispatchEvent(new Event('input'));
+      // scroll to top
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+
+    document.getElementById('randomBtn').addEventListener('click', ()=>{
+      const visible = Array.from(document.querySelectorAll('.card')).filter(c=> c.style.display !== 'none');
+      if(!visible.length) return alert('No Pokémon found to surprise you with!');
+      const pick = visible[Math.floor(Math.random()*visible.length)];
+      // momentary highlight
+      pick.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:500});
+      pick.scrollIntoView({behavior:'smooth', block:'center'});
+      // flash
+      pick.style.outline = '3px solid rgba(255,230,80,0.32)';
+      setTimeout(()=> pick.style.outline = '', 1100);
+    });
+
+    // small accessibility: allow Enter on card press to catch
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && document.activeElement){
+        const card = document.activeElement.closest && document.activeElement.closest('.card');
+        if(card){
+          const btn = card.querySelector('.catch-btn');
+          if(btn) btn.click();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

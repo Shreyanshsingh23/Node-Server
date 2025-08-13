@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>About — PokéHub</title>
+<style>
+/* Same theme styling as main page */
+:root{
+  --bg-grad: linear-gradient(135deg,#FFDE59 0%, #FFD166 30%, #FF9AA2 60%, #9AD0F5 100%);
+  --accent: #E3352A;
+  --muted: #556;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body{
+  margin:0;
+  background: var(--bg-grad);
+  color:#222;
+}
+.hero{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  padding:28px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.25), rgba(255,255,255,0.08));
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+.brand{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.pokeball {
+  width:64px;height:64px;border-radius:50%;position:relative;
+  background: linear-gradient(#fff,#eee);
+  display:flex;align-items:center;justify-content:center;
+}
+.pokeball::before{
+  content:"";position:absolute;left:0;right:0;top:0;bottom:50%;
+  background: linear-gradient(#ff5a55,#d62828);
+  border-top-left-radius:50% 50%;border-top-right-radius:50% 50%;
+  border-bottom:6px solid #222;
+}
+.pokeball::after{
+  content:"";position:absolute;left:8px;right:8px;top:calc(50% - 6px);
+  height:12px;background:#222;border-radius:6px;
+}
+.pokeball .center{
+  position:relative;width:28px;height:28px;border-radius:50%;
+  background:#fff;border:6px solid #222;box-sizing:border-box;
+}
+main{
+  padding:28px;max-width:800px;margin:auto;
+}
+h1{ margin:0;font-size:22px; }
+p{ color:var(--muted);line-height:1.6; }
+a{
+  color:var(--accent);text-decoration:none;font-weight:bold;
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="brand">
+    <div class="pokeball"><div class="center"></div></div>
+    <div>
+      <h1>About PokéHub</h1>
+      <p>Trainer's paradise for Pokémon collection & adventure</p>
+    </div>
+  </div>
+</header>
+<main>
+  <h2>Our Mission</h2>
+  <p>PokéHub is built by passionate trainers for trainers. Our goal is to make your Pokémon journey more exciting, organized, and connected. We help you keep track of your Pokémon, share your catches, and discover rare creatures around the world.</p>
+
+  <h2>How We Started</h2>
+  <p>It all began with a small group of friends trading Pokémon cards at school. Over time, we realized that a single place to organize all our Pokémon adventures would make the experience more fun. Thus, PokéHub was born.</p>
+
+  <h2>Join Us</h2>
+  <p>Be part of the community — whether you’re a new trainer or a seasoned Pokémon master. Explore, battle, and grow together. <a href="/contact">Contact us</a> to learn more.</p>
+</main>
+</body>
+</html>

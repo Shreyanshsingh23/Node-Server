@@ -12,10 +12,23 @@ const myServer =  http.createServer((req, res) => {
         })
         switch(req.url) {
     case '/':
-        res.end('<h1>Home Page</h1>')
-        break
+        fs.readFile('./pokemon.html', 'utf-8', (err, data)=> {if (err) {
+                    res.writeHead(500, { 'Content-Type': 'text/plain' });
+                    res.end(err);
+                } else {
+                    res.writeHead(200, { 'Content-Type': 'text/html' });
+                    res.end(data);
+                }
+            });
+            break;
     case '/about':
-        res.end('<h1>About Page</h1>')
+        fs.readFile('./about.html', 'utf-8',(err, data)=> {if (err) {
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end(err);
+        } else {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        }})
         break
     case '/contact':
         res.end('<h1>Contact Page Data</h1>')
@@ -26,6 +39,8 @@ const myServer =  http.createServer((req, res) => {
 }
     })
 
+
+    
 
 
 
